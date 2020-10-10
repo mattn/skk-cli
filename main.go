@@ -95,7 +95,7 @@ func main() {
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		if enc != nil {
+		if enc == nil {
 			fmt.Print("> ")
 		}
 		if !scanner.Scan() {

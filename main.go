@@ -100,7 +100,7 @@ func main() {
 			break
 		}
 		var req Request
-		if jm {
+		if enc != nil {
 			s := scanner.Text()
 			err := json.Unmarshal([]byte(s), &req)
 			if err != nil {
@@ -151,7 +151,7 @@ func main() {
 		if len(result) == 0 {
 			result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
 		}
-		if jm {
+		if enc != nil {
 			if err := enc.Encode(&Response{Status: "OK", Result: result}); err != nil {
 				log.Fatal(err)
 			}

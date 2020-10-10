@@ -1,0 +1,4 @@
+github.com/hermanschaaf/kana v0.0.0-20131031135054-bdd479bba5f1 h1:DGMk1qOdwt0aOBiLG96Ur23b3P3fFQFYKujuCQi1k1Y=
+github.com/hermanschaaf/kana v0.0.0-20131031135054-bdd479bba5f1/go.mod h1:Aspe8YCO6V+7zL5u644aileFmSoDBfuf5YTIrgo/4C0=
+github.com/mattn/go-skkdic v0.0.1 h1:+oXH/8XUEfGKsps11xpmlwhgb4JMklv/ESXnRWR5w7w=
+github.com/mattn/go-skkdic v0.0.1/go.mod h1:EuDWBW/Rxv/CcA9g6WMzu/ubtpXv3r2TcydFiOxwA8U=

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -60,9 +61,21 @@ func loadDict(d *skkdic.Dict, path string) error {
 	return d.Load(f)
 }
 
+type Request struct {
+	Method string `json:"method"`
+	Text   string `json:"text"`
+}
+
+type Response struct {
+	Status string      `json:"status"`
+	Result interface{} `json:"result"`
+}
+
 func main() {
+	var jm bool
 	var paths arrayFlags
-	flag.Var(&paths, "d", "Some description for this param.")
+	flag.BoolVar(&jm, "json", false, "JSON mode")
+	flag.Var(&paths, "d", "path to SKK-JISYO.L")
 	flag.Parse()
 
 	if len(paths) == 0 {
@@ -76,11 +89,31 @@ func main() {
 		}
 	}
 
-	enc := json.NewEncoder(os.Stdout)
+	var enc *json.Encoder
+	if jm {
+		enc = json.NewEncoder(os.Stdout)
+	}
 	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		s := scanner.Text()
-		words := split(s)
+	for {
+		fmt.Print("> ")
+		if !scanner.Scan() {
+			break
+		}
+		var req Request
+		if jm {
+			s := scanner.Text()
+			err := json.Unmarshal([]byte(s), &req)
+			if err != nil {
+				if err := enc.Encode(&Response{Status: "NG", Result: err.Error()}); err != nil {
+					log.Fatal(err)
+				}
+				continue
+			}
+		} else {
+			s := scanner.Text()
+			req.Text = s
+		}
+		words := split(req.Text)
 		result := []string{}
 		prefix := ""
 		for len(words) > 0 {
@@ -108,7 +141,7 @@ func main() {
 				}
 			}
 		} else if len(words) == 1 {
-			ss := kana.RomajiToHiragana(strings.ToLower(s))
+			ss := kana.RomajiToHiragana(strings.ToLower(req.Text))
 			for _, e := range dic.SearchOkuriNasi(ss) {
 				for _, word := range e.Words {
 					result = append(result, word.Text)
@@ -116,8 +149,16 @@ func main() {
 			}
 		}
 		if len(result) == 0 {
-			result = append(result, kana.RomajiToHiragana(strings.ToLower(s)))
+			result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
 		}
-		enc.Encode(result)
+		if jm {
+			if err := enc.Encode(&Response{Status: "OK", Result: result}); err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			for _, r := range result {
+				fmt.Println(r)
+			}
+		}
 	}
 }

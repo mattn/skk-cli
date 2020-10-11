@@ -36,7 +36,11 @@ func defaultDict() string {
 }
 
 var (
-	reTrim = regexp.MustCompile("[aiueo]$")
+	reTrim   = regexp.MustCompile("[aiueo]$")
+	replacer = strings.NewReplacer(
+		".", "。",
+		",", "、",
+	)
 )
 
 func split(s string) []string {
@@ -50,6 +54,10 @@ func split(s string) []string {
 		}
 	}
 	return append(result, string(rs[j:]))
+}
+
+func roma2hira(s string) string {
+	return replacer.Replace(kana.RomajiToHiragana(s))
 }
 
 func loadDict(d *skkdic.Dict, path string) error {
@@ -123,7 +131,7 @@ func main() {
 			if len(rs) > 0 && unicode.IsUpper(rs[0]) {
 				break
 			}
-			prefix += kana.RomajiToHiragana(words[0])
+			prefix += roma2hira(words[0])
 			words = words[1:]
 		}
 		if len(words) > 1 {
@@ -134,16 +142,16 @@ func main() {
 			suf := words[len(words)-1]
 			words[len(words)-1] = reTrim.ReplaceAllString(suf, "")
 			for _, word := range words {
-				ss += kana.RomajiToHiragana(strings.ToLower(word))
+				ss += roma2hira(strings.ToLower(word))
 			}
-			suf = kana.RomajiToHiragana(strings.ToLower(suf))
+			suf = roma2hira(strings.ToLower(suf))
 			for _, e := range dic.SearchOkuriAri(ss) {
 				for _, word := range e.Words {
 					result = append(result, prefix+word.Text+suf)
 				}
 			}
 		} else if len(words) == 1 {
-			ss := kana.RomajiToHiragana(strings.ToLower(req.Text))
+			ss := roma2hira(strings.ToLower(req.Text))
 			for _, e := range dic.SearchOkuriNasi(ss) {
 				for _, word := range e.Words {
 					result = append(result, word.Text)
@@ -156,9 +164,9 @@ func main() {
 					result = append(result, word.Text)
 				}
 			}
-			result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
+			result = append(result, roma2hira(strings.ToLower(req.Text)))
 		} else {
-			hira := kana.RomajiToHiragana(strings.ToLower(req.Text))
+			hira := roma2hira(strings.ToLower(req.Text))
 			if strings.IndexFunc(hira, func(r rune) bool { return unicode.IsTitle(r) }) == -1 {
 				result = append(result, hira)
 			}

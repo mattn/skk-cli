@@ -156,14 +156,18 @@ func main() {
 					result = append(result, word.Text)
 				}
 			}
+			result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
 		} else {
+			hira := kana.RomajiToHiragana(strings.ToLower(req.Text))
+			if strings.IndexFunc(hira, func(r rune) bool { return unicode.IsTitle(r) }) == -1 {
+				result = append(result, hira)
+			}
 			for _, e := range dic.SearchOkuriNasiPrefix(req.Text) {
 				for _, word := range e.Words {
 					result = append(result, word.Text)
 				}
 			}
 		}
-		result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
 		if enc != nil {
 			if err := enc.Encode(&Response{Status: "OK", Result: result}); err != nil {
 				log.Fatal(err)

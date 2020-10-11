@@ -150,7 +150,7 @@ func main() {
 				}
 			}
 		}
-		for _, e := range dic.SearchOkuriNasi(req.Text) {
+		for _, e := range dic.SearchOkuriNasiPrefix(req.Text) {
 			for _, word := range e.Words {
 				result = append(result, word.Text)
 			}

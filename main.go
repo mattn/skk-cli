@@ -34,7 +34,7 @@ var (
 type arrayFlags []string
 
 func (i *arrayFlags) String() string {
-	return "path to SKK-JISYO"
+	return "Path to SKK-JISYO"
 }
 
 func (i *arrayFlags) Set(value string) error {
@@ -91,7 +91,7 @@ func main() {
 	var paths arrayFlags
 	var showVersion bool
 	flag.BoolVar(&jm, "json", false, "JSON mode")
-	flag.Var(&paths, "d", "path to SKK-JISYO.L")
+	flag.Var(&paths, "d", "Path to SKK-JISYO.L")
 	flag.BoolVar(&showVersion, "V", false, "Print the version")
 	flag.Parse()
 

@@ -150,14 +150,20 @@ func main() {
 				}
 			}
 		}
-		for _, e := range dic.SearchOkuriNasiPrefix(req.Text) {
-			for _, word := range e.Words {
-				result = append(result, word.Text)
+		if unicode.IsUpper([]rune(req.Text)[0]) {
+			for _, e := range dic.SearchOkuriNasiPrefix(req.Text) {
+				for _, word := range e.Words {
+					result = append(result, word.Text)
+				}
+			}
+		} else {
+			for _, e := range dic.SearchOkuriNasiPrefix(req.Text) {
+				for _, word := range e.Words {
+					result = append(result, word.Text)
+				}
 			}
 		}
-		if len(result) == 0 {
-			result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
-		}
+		result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
 		if enc != nil {
 			if err := enc.Encode(&Response{Status: "OK", Result: result}); err != nil {
 				log.Fatal(err)

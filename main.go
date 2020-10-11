@@ -9,11 +9,26 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"unicode"
 
 	"github.com/hermanschaaf/kana"
 	"github.com/mattn/go-skkdic"
+)
+
+const name = "skk-cli"
+
+const version = "0.0.1"
+
+var revision = "HEAD"
+
+var (
+	reTrim   = regexp.MustCompile("[aiueo]$")
+	replacer = strings.NewReplacer(
+		".", "。",
+		",", "、",
+	)
 )
 
 type arrayFlags []string
@@ -34,14 +49,6 @@ func defaultDict() string {
 	}
 	return filepath.Join(p, "skk-cli", "SKK-JISYO.L")
 }
-
-var (
-	reTrim   = regexp.MustCompile("[aiueo]$")
-	replacer = strings.NewReplacer(
-		".", "。",
-		",", "、",
-	)
-)
 
 func split(s string) []string {
 	result := []string{}
@@ -82,9 +89,16 @@ type Response struct {
 func main() {
 	var jm bool
 	var paths arrayFlags
+	var showVersion bool
 	flag.BoolVar(&jm, "json", false, "JSON mode")
 	flag.Var(&paths, "d", "path to SKK-JISYO.L")
+	flag.BoolVar(&showVersion, "V", false, "Print the version")
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("%s %s (rev: %s/%s)\n", name, version, revision, runtime.Version())
+		return
+	}
 
 	if len(paths) == 0 {
 		paths = []string{defaultDict()}

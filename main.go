@@ -150,6 +150,11 @@ func main() {
 				}
 			}
 		}
+		for _, e := range dic.SearchOkuriNasi(req.Text) {
+			for _, word := range e.Words {
+				result = append(result, word.Text)
+			}
+		}
 		if len(result) == 0 {
 			result = append(result, kana.RomajiToHiragana(strings.ToLower(req.Text)))
 		}

@@ -172,7 +172,7 @@ func main() {
 				}
 			}
 		}
-		if unicode.IsUpper([]rune(req.Text)[0]) {
+		if len(req.Text) > 0 && unicode.IsUpper([]rune(req.Text)[0]) {
 			for _, e := range dic.SearchOkuriNasiPrefix(req.Text) {
 				for _, word := range e.Words {
 					result = append(result, word.Text)
